@@ -22,14 +22,13 @@ import functools
 
 from t5.data import postprocessors
 from t5.data import preprocessors
+from t5.data.utils import DEFAULT_SPM_PATH
 from t5.data.utils import set_global_cache_dirs
 from t5.data.utils import TaskRegistry
 from t5.data.utils import TfdsTask
 from t5.evaluation import metrics
 import tensorflow_datasets as tfds
 
-
-DEFAULT_SPM_PATH = "gs://t5-data/vocabs/cc_all.32000/sentencepiece.model"  # GCS
 
 
 
@@ -290,6 +289,17 @@ TaskRegistry.add(
     TfdsTask,
     tfds_name="squad/plain_text:0.1.0",
     text_preprocessor=preprocessors.squad,
+    postprocess_fn=postprocessors.qa,
+    metric_fns=[metrics.qa],
+    sentencepiece_model_path=DEFAULT_SPM_PATH)
+
+# Maximized evaluation metrics over all answers.
+TaskRegistry.add(
+    "squad_v010_context_free",
+    TfdsTask,
+    tfds_name="squad/plain_text:0.1.0",
+    text_preprocessor=functools.partial(
+        preprocessors.squad, include_context=False),
     postprocess_fn=postprocessors.qa,
     metric_fns=[metrics.qa],
     sentencepiece_model_path=DEFAULT_SPM_PATH)

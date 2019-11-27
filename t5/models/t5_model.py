@@ -36,5 +36,11 @@ class T5Model(object):
     raise NotImplementedError()
 
   @abc.abstractmethod
-  def predict(self, checkpoint_steps, input_file, output_file):
+  def predict(self, input_file, output_file, checkpoint_steps, beam_size,
+              temperature):
+    raise NotImplementedError()
+
+  @abc.abstractmethod
+  def finetune(self, mixture_or_task_name, finetune_steps, pretrained_model_dir,
+               pretrained_checkpoint_step):
     raise NotImplementedError()
